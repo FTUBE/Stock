@@ -20,7 +20,7 @@ public class Calc {
 		
 		while(true){
 			count++;
-			ArrayList<Double> toret = predi(16.8500,day);
+			ArrayList<Double> toret = predi(16.8200,day);
 			ArrayList<Double> temp = deci(toret);
 			for(int i = 0; i < day;i++) believe_arr.set(i, believe_arr.get(i)+temp.get(i));
 			if(count % 10000000 == 0){
