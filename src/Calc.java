@@ -2,51 +2,65 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Calc {	
-	static boolean thinking = true;
+	static boolean thinking = false;
 	static double gamma = 0.08;
 	static ArrayList<Double> trend = new ArrayList<Double>();
 	static ArrayList<Double> finalchoice;
 	static ArrayList<Double> anotherchoice;
 	static double finalJPY = Double.MIN_VALUE,finalRMB = Double.MIN_VALUE;
+	static double RMB = 1000.00, JPY = 172044.00;
 	
 	public static void main(String[] args) throws InterruptedException{
-		Current c = new Current(170000,3000);
-		double RMB = 1000.00;
-		double JPY = 172044.00;
-		double believe = 0.0000;
+
+
 		double count = 0.0;
+		int day = 5;
+		ArrayList<Double> believe_arr = new ArrayList<Double>();
+		for(int i = 0; i < day;i++) believe_arr.add(0.0);
+		
 		while(true){
 			count++;
-			ArrayList<Double> toret = predi(16.8580,14);
-			toret.add(0, 16.8580);
-			believe += deci(toret);
-			if(count % 10000 == 0){
+			ArrayList<Double> toret = predi(16.8500,day);
+			ArrayList<Double> temp = deci(toret);
+			for(int i = 0; i < day;i++) believe_arr.set(i, believe_arr.get(i)+temp.get(i));
+			if(count % 10000000 == 0){
 				System.out.println("After " + count +" enumerations. Program suggests you ");
-				if(believe > 0) System.out.println(" BUY "+believe/count*RMB+" RMB.");
-				else System.out.println(" SELL "+(believe/count*JPY)*(-1)+" JPY.");
-				Thread.sleep(5000);
+				for(int i = 0; i < day;i++) getconfi(believe_arr.get(i),count);
+				//Thread.sleep(1000);
 			}
 		}
-	
 		
+	}
+	
+	public static void getconfi(double believe,double count){
+		if(believe > 0) System.out.println(" BUY "+believe/count*RMB+" RMB.");
+		else System.out.println(" SELL "+((believe/count)*JPY)*(-1)+" JPY.");
 	}
 	
 	public static ArrayList<Double> predi(double init, int span){
 		
 		ArrayList<Double> toret = new ArrayList<Double>();
-		for(int i = 1;  i <= span; i++){
-			double base = 0.0025;//POSITIVE 0.005 proper
-			double delta = (Math.round((10-psG(10,0.15))*10000.0))/10000.0;
+		toret.add(init);
+		for(int i = 1;  i <= span-1; i++){
+			double base = 0.31;//POSITIVE 0.31 proper
+			double delta = (Math.round((10-psG(10,0.35))*10000.0))/10000.0;//POSITIVE 0.35 proper
 			double percent = Math.round((base+delta)*10000.0)/10000.0;
 			double redu = Math.round((percent/100.0)*1000000.0)/1000000.0;
 			init = Math.round((init*(1+redu))*10000.0)/10000.0;
 			//System.out.println(init);
 			toret.add(init);
 		}
-		
+		//for(double e: toret) System.out.println(e);
+/*		double sum = 0;
+		for(int i = 1; i < toret.size();i++){
+			
+			sum += Math.abs(toret.get(i)-toret.get(i-1));
+		}
+		System.out.println("\n\n"+sum/4);
+*/		
 		return toret;
 	}
-	public static double deci(ArrayList<Double> tre){
+	public static ArrayList<Double> deci(ArrayList<Double> tre){
 		ArrayList<Double> toret = new ArrayList<Double>();
 		double delta = 0;
 		for(int i = 0; i < tre.size();i++){
@@ -82,7 +96,7 @@ public class Calc {
 			}
 			System.out.println();
 		}
-		return toret.get(0);
+		return toret;
 	}
 	
 	public static void enumerate(int day, Current c, ArrayList<Double> choice){
