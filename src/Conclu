@@ -1,0 +1,65 @@
+From what we have discussed in previous session, there are four starting points:
+
+1. The bottom layer architecture (that is, the place where the rules are applied to, whether it is Ad-hoc environment or BSS)
+
+2. When should we balance the load. (Something we haven't considered before, but indeed, this should be treated collectively.)
+
+3. Which flow should we remove?
+
+4. Where should the removed flow go?
+
+I summed up the ideas and ordered them based on the priority, they are:
+
+TOPIC1 - On how to(the place and flows) direct the load, so that it gives best balancing property.
+       	 (Or, An integrated load balancing method that consider both connectivity and STA choices.)
+
+Problem : There are two reasons for load balancing:
+	  1. Some APs are over-loading while others remain under-used.
+	  2. We can somehow arrange a certain set of flows and direct them to those under-utilized APs.
+
+	  Therefore, even if we could, by any chance, find a way to choose the best flow(STAs), if we cannot further find a destination where the flows can be directed, the load balancing is meaningless.
+	  
+	  WHAT WE KNOW? This suggests that the strategy should be made by taking both 'which' and 'where' into consideration.
+
+Solution : 1. A matrix representation of the connectivity of AP-STA association.
+	   2. The desired condition will be, a maximized balance of Each AP.(APs have minimized STD_DEV)
+	   In total, we have an allocation map, then we switch certain STAs according to that.
+
+TOPIC2 - How to give better APs utilization as well as a lower degree of switching cost.
+
+Problem : Even if somehow we find an allocation map, there might be a huge cost to switch the STAs, given the fact that:
+	  Fact : The effect of the above strategy is global-wide, so any topological or network changes in some local area will potentially affect the global state.
+	  
+	  The discuessed switching happens frequently given the fact that:
+	  Fact 1: The bursty characteristic of network flow.
+	  Fact 2: The dynamic nature of the AP-STA association.
+	  
+	  In total, the problem is, the switching - 'Costs a lot', 'Happens a lot'
+
+Solution : Apply the rules less frequently? - It is not necessary to switch STA everytime the topology changes.
+	 	   
+		   Or
+
+	   Compromise to a less costy strategy, respectively, this will result a worse balanced association.
+
+TOPIC3 - A conservative strategy considering bursty load feature
+
+Problem : Due to the Bursty feature of network traffic, it will be costy if we apply LB strategy each time the traffic changes. A temporary bursty traffic may result a massive change of the association, and thus affect seriously to the user experience.
+
+Solution : If some APs reach bottleneck, we hold for some time DELTA to see if it fades. If not, we apply strategy.
+	   Then the main difficulty lies on how to define the variation of DELTA.
+
+TOPIC4 - On the granularity of switching STA. (A up/downstream separated method of load balancing)
+
+Problem : If we want to kick out some STAs, the user might experience an undesriable moment of re-connection.
+
+Solution : Take a look at what happens for the transmission. The user registered to an AP. In a central-based environment, we have AC taking control over the APs. Therefore, the AC store, in its MAC address table, the IP address of each STA, as well as their mapped MAC address obtained by ARP. In a wireless condition, 802.11 uses a boardcast way of transmission. So if an AP send a frame to a certain STA, although it marks the MACaddr in the 2nd layer field, every station still receive it, and check for a match, vice versa.
+
+Back to the problem, the undesirability is due to fact that the switch is executed in a STA base. However, in a more closer look, user traffic might be asymmetric (A huge difference between up and downstream traffic), which is also what ADSL assumes. Is it possible to switch only downstream data?(Without breaking user's current session).
+     
+	The evidences that support the availability of such method : 
+	1. In LAN network, station receives 2nd layer frame only based on the Destination MAC addr, it does not care which LAN component sends it.
+	2. In an centrailised AC-AP framework, the AP is nothing but an ANTENNA, it is less intelligent. Therefore if we switch a downstream, we only need to switch the table in AC.(This can, as well, give a better feature of centrailisation.)
+
+
+	SO A POSSIBLE SOLUTION COULD BE : 
