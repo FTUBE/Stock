@@ -63,3 +63,11 @@ Back to the problem, the undesirability is due to fact that the switch is execut
 
 
 	SO A POSSIBLE SOLUTION COULD BE : 
+
+	If an AP is overloaded and we find the user with greatest downstream usage.
+	Choose another free-AP that this STA will be shifted to.
+	Change the ARPtable in AC, so that, from now on, each frame to that STA will be forwarded to the alternative AP.
+
+	From the user point of view, it still receives the frame since the destination MAC address hasn't been changed.
+
+TOPIC5:
